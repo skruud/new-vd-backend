@@ -6,20 +6,20 @@ def get_data(event, context):
     #print(event['body'])
     db = SQLDatabase()
 
-    b = event['body']
+    data = []
 
-    sql = """
-            SELECT %s
-            FROM %s
-            WHERE %s
-            ORDER BY %s
-            """ %(b['select'], b['from'], b['where'], b['order'])
+    for b in event['body']:
+        #print(b['type'])
 
-    print(sql)
+        sql = get_sql(b['type'], b['select'], 
+                      b['from'], b['where'], 
+                      b['order'])
 
-    db_response = db.retrieve_sql_data(sql)
+        #print(sql)
 
-    print(db_response)
+        data.append(db.retrieve_sql_data(sql))
+
+    #print(data)
 
     db.disconnect()
 
@@ -28,7 +28,35 @@ def get_data(event, context):
         "statusCode": 200,
         "headers": {
           'Access-Control-Allow-Origin': '*'
-        }
+        },
+        "body": data
     }
 
     return response
+
+def get_sql(type, select, table, where, order):
+    types_allowed = ['normal', 'unique']
+    tables_allowed = ['duration', 'form', 'industry', 
+                     'occupation', 'sector', 'role']
+
+    if type not in types_allowed:
+        return 'Type Error'
+
+    if table not in tables_allowed:
+        return 'Table Error'
+
+
+    sqls = {
+        'normal' : """
+                    SELECT %s
+                    FROM %s
+                    WHERE %s
+                    ORDER BY %s
+                    """ %(select, table, where, order),
+        'unique' : """
+                    SELECT DISTINCT %s
+                    FROM %s
+                    ORDER BY %s
+                    """ %(select, table, order)
+    }
+    return sqls[type]
