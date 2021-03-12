@@ -35,8 +35,4 @@ json_test = {
 
 data = get_data(json_test, 'b')
 
-for element in data['body']:
-    print('Start of element:')
-    print(element)
-    #for amount, date in element:
-        #print(amount)
+print(json.loads(data['body'])[1])
