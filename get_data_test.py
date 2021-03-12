@@ -17,11 +17,11 @@ json_test = {
     },
     "body": [
         {
-        "type": "normall",
-        "select": "amount, date",
-        "from": "occupation",
-        "where": "location = 'Oslo' AND category = 'IT utvikling'",
-        "order": "date"
+        "type": "unique",
+        "select": "category",
+        "from": "sector",
+        "where": "location = 'Oslo'",
+        "order": "category"
         },
         {
         "type": "normal",
