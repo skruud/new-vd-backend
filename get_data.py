@@ -1,5 +1,6 @@
 from sql_database import SQLDatabase
 import json
+import datetime
 
 def get_data(event, context):
     
@@ -29,7 +30,7 @@ def get_data(event, context):
         "headers": {
           'Access-Control-Allow-Origin': '*'
         },
-        "body": data
+        "body": json.dumps(data, cls=DateTimeEncoder)
     }
 
     return response
@@ -60,3 +61,10 @@ def get_sql(type, select, table, where, order):
                     """ %(select, table, order)
     }
     return sqls[type]
+
+# subclass JSONEncoder
+class DateTimeEncoder(json.JSONEncoder):
+        #Override the default method
+        def default(self, obj):
+            if isinstance(obj, (datetime.date, datetime.datetime)):
+                return obj.isoformat()
